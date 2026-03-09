@@ -10,6 +10,7 @@ const pageRoutes = require("./routes/pageRoutes");
 const menuRoutes = require("./routes/menuRoutes");
 const contentRoutes = require("./routes/contentRoutes");
 const blogRoutes = require("./routes/blogRoutes");
+const settingsRoutes = require("./routes/settingsRoutes");
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -30,6 +31,7 @@ app.use("/api/pages", pageRoutes);
 app.use("/api/menu", menuRoutes);
 app.use("/api/content", contentRoutes);
 app.use("/api/blogs", blogRoutes);
+app.use("/api/settings", settingsRoutes);
 
 // Only listen when running locally (not on Vercel)
 if (process.env.VERCEL !== "1") {
