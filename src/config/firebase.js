@@ -18,25 +18,23 @@ const db = getFirestore(app);
 
 // --- Admin SDK (used for Storage — bypasses security rules) ---
 const admin = require("firebase-admin");
-const path = require("path");
-const fs = require("fs");
-
-const serviceAccountPath = path.join(__dirname, "../../serviceAccountKey.json");
 
 let adminBucket = null;
 
-if (fs.existsSync(serviceAccountPath)) {
-  const serviceAccount = require(serviceAccountPath);
+if (process.env.FIREBASE_PRIVATE_KEY && process.env.FIREBASE_CLIENT_EMAIL) {
   admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount),
+    credential: admin.credential.cert({
+      projectId: process.env.FIREBASE_PROJECT_ID,
+      clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+      privateKey: process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, "\n"),
+    }),
     storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
   });
   adminBucket = admin.storage().bucket();
   console.log("Firebase Admin SDK initialized (Storage ready)");
 } else {
   console.warn(
-    "WARNING: serviceAccountKey.json not found at project root. Image uploads will NOT work.\n" +
-    "Download it from Firebase Console > Project Settings > Service Accounts > Generate New Private Key"
+    "WARNING: Firebase Admin SDK not configured. Set FIREBASE_CLIENT_EMAIL and FIREBASE_PRIVATE_KEY env variables."
   );
 }
 
