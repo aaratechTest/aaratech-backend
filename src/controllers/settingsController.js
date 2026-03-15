@@ -16,6 +16,8 @@ async function getSettings(req, res) {
     const data = settingsDoc.data();
     res.json({
       whatsappNumber: data.whatsappNumber || "",
+      privacyPolicyUrl: data.privacyPolicyUrl || "",
+      openingsUrl: data.openingsUrl || "",
     });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -25,7 +27,7 @@ async function getSettings(req, res) {
 // PUT /api/settings
 async function updateSettings(req, res) {
   try {
-    const { whatsappNumber } = req.body;
+    const { whatsappNumber, privacyPolicyUrl, openingsUrl } = req.body;
 
     if (whatsappNumber !== undefined && typeof whatsappNumber !== "string") {
       return res
@@ -33,10 +35,24 @@ async function updateSettings(req, res) {
         .json({ error: "whatsappNumber must be a string" });
     }
 
+    if (privacyPolicyUrl !== undefined && typeof privacyPolicyUrl !== "string") {
+      return res
+        .status(400)
+        .json({ error: "privacyPolicyUrl must be a string" });
+    }
+
+    if (openingsUrl !== undefined && typeof openingsUrl !== "string") {
+      return res
+        .status(400)
+        .json({ error: "openingsUrl must be a string" });
+    }
+
     await setDoc(
       doc(db, SETTINGS, SITE),
       {
         whatsappNumber: whatsappNumber || "",
+        privacyPolicyUrl: privacyPolicyUrl || "",
+        openingsUrl: openingsUrl || "",
         updatedAt: Date.now(),
       },
       { merge: true }

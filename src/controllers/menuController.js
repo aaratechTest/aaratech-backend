@@ -1,5 +1,6 @@
 const { db } = require("../config/firebase");
 const { doc, getDoc, setDoc } = require("firebase/firestore");
+const defaultMenu = require("../data/defaultMenu");
 
 const MENUS = "menus";
 const MAIN_MENU = "main";
@@ -10,12 +11,12 @@ async function getMenu(req, res) {
     const menuDoc = await getDoc(doc(db, MENUS, MAIN_MENU));
 
     if (!menuDoc.exists()) {
-      return res.json({ items: [] });
+      return res.json({ groups: [] });
     }
 
     const data = menuDoc.data();
     res.json({
-      items: data.items || [],
+      groups: data.groups || [],
       updatedAt: data.updatedAt,
     });
   } catch (err) {
@@ -26,14 +27,14 @@ async function getMenu(req, res) {
 // PUT /api/menu
 async function updateMenu(req, res) {
   try {
-    const { items } = req.body;
+    const { groups } = req.body;
 
-    if (!Array.isArray(items)) {
-      return res.status(400).json({ error: "Items must be an array" });
+    if (!Array.isArray(groups)) {
+      return res.status(400).json({ error: "groups must be an array" });
     }
 
     await setDoc(doc(db, MENUS, MAIN_MENU), {
-      items,
+      groups,
       updatedAt: Date.now(),
     });
 
@@ -43,4 +44,18 @@ async function updateMenu(req, res) {
   }
 }
 
-module.exports = { getMenu, updateMenu };
+// POST /api/menu/seed
+async function seedMenu(req, res) {
+  try {
+    await setDoc(doc(db, MENUS, MAIN_MENU), {
+      ...defaultMenu,
+      updatedAt: Date.now(),
+    });
+
+    res.json({ message: "Menu seeded successfully", groupCount: defaultMenu.groups.length });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+}
+
+module.exports = { getMenu, updateMenu, seedMenu };

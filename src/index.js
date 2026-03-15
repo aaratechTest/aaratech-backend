@@ -10,6 +10,7 @@ const pageRoutes = require("./routes/pageRoutes");
 const menuRoutes = require("./routes/menuRoutes");
 const contentRoutes = require("./routes/contentRoutes");
 const blogRoutes = require("./routes/blogRoutes");
+const eventRoutes = require("./routes/eventRoutes");
 const settingsRoutes = require("./routes/settingsRoutes");
 
 const app = express();
@@ -31,6 +32,7 @@ app.use("/api/pages", pageRoutes);
 app.use("/api/menu", menuRoutes);
 app.use("/api/content", contentRoutes);
 app.use("/api/blogs", blogRoutes);
+app.use("/api/events", eventRoutes);
 app.use("/api/settings", settingsRoutes);
 
 // Only listen when running locally (not on Vercel)
