@@ -18,6 +18,8 @@ async function getSettings(req, res) {
       whatsappNumber: data.whatsappNumber || "",
       privacyPolicyUrl: data.privacyPolicyUrl || "",
       openingsUrl: data.openingsUrl || "",
+      requestDemoUrl: data.requestDemoUrl || "",
+      experienceToolUrl: data.experienceToolUrl || "",
     });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -27,7 +29,7 @@ async function getSettings(req, res) {
 // PUT /api/settings
 async function updateSettings(req, res) {
   try {
-    const { whatsappNumber, privacyPolicyUrl, openingsUrl } = req.body;
+    const { whatsappNumber, privacyPolicyUrl, openingsUrl, requestDemoUrl, experienceToolUrl } = req.body;
 
     if (whatsappNumber !== undefined && typeof whatsappNumber !== "string") {
       return res
@@ -47,12 +49,26 @@ async function updateSettings(req, res) {
         .json({ error: "openingsUrl must be a string" });
     }
 
+    if (requestDemoUrl !== undefined && typeof requestDemoUrl !== "string") {
+      return res
+        .status(400)
+        .json({ error: "requestDemoUrl must be a string" });
+    }
+
+    if (experienceToolUrl !== undefined && typeof experienceToolUrl !== "string") {
+      return res
+        .status(400)
+        .json({ error: "experienceToolUrl must be a string" });
+    }
+
     await setDoc(
       doc(db, SETTINGS, SITE),
       {
         whatsappNumber: whatsappNumber || "",
         privacyPolicyUrl: privacyPolicyUrl || "",
         openingsUrl: openingsUrl || "",
+        requestDemoUrl: requestDemoUrl || "",
+        experienceToolUrl: experienceToolUrl || "",
         updatedAt: Date.now(),
       },
       { merge: true }
