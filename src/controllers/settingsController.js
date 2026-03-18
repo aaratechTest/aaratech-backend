@@ -20,6 +20,11 @@ async function getSettings(req, res) {
       openingsUrl: data.openingsUrl || "",
       requestDemoUrl: data.requestDemoUrl || "",
       experienceToolUrl: data.experienceToolUrl || "",
+      socialFacebook: data.socialFacebook || "",
+      socialTwitter: data.socialTwitter || "",
+      socialLinkedin: data.socialLinkedin || "",
+      socialInstagram: data.socialInstagram || "",
+      socialYoutube: data.socialYoutube || "",
     });
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -29,36 +34,20 @@ async function getSettings(req, res) {
 // PUT /api/settings
 async function updateSettings(req, res) {
   try {
-    const { whatsappNumber, privacyPolicyUrl, openingsUrl, requestDemoUrl, experienceToolUrl } = req.body;
+    const {
+      whatsappNumber, privacyPolicyUrl, openingsUrl, requestDemoUrl, experienceToolUrl,
+      socialFacebook, socialTwitter, socialLinkedin, socialInstagram, socialYoutube,
+    } = req.body;
 
-    if (whatsappNumber !== undefined && typeof whatsappNumber !== "string") {
-      return res
-        .status(400)
-        .json({ error: "whatsappNumber must be a string" });
-    }
-
-    if (privacyPolicyUrl !== undefined && typeof privacyPolicyUrl !== "string") {
-      return res
-        .status(400)
-        .json({ error: "privacyPolicyUrl must be a string" });
-    }
-
-    if (openingsUrl !== undefined && typeof openingsUrl !== "string") {
-      return res
-        .status(400)
-        .json({ error: "openingsUrl must be a string" });
-    }
-
-    if (requestDemoUrl !== undefined && typeof requestDemoUrl !== "string") {
-      return res
-        .status(400)
-        .json({ error: "requestDemoUrl must be a string" });
-    }
-
-    if (experienceToolUrl !== undefined && typeof experienceToolUrl !== "string") {
-      return res
-        .status(400)
-        .json({ error: "experienceToolUrl must be a string" });
+    // Validate all string fields
+    const stringFields = {
+      whatsappNumber, privacyPolicyUrl, openingsUrl, requestDemoUrl, experienceToolUrl,
+      socialFacebook, socialTwitter, socialLinkedin, socialInstagram, socialYoutube,
+    };
+    for (const [key, value] of Object.entries(stringFields)) {
+      if (value !== undefined && typeof value !== "string") {
+        return res.status(400).json({ error: `${key} must be a string` });
+      }
     }
 
     await setDoc(
@@ -69,6 +58,11 @@ async function updateSettings(req, res) {
         openingsUrl: openingsUrl || "",
         requestDemoUrl: requestDemoUrl || "",
         experienceToolUrl: experienceToolUrl || "",
+        socialFacebook: socialFacebook || "",
+        socialTwitter: socialTwitter || "",
+        socialLinkedin: socialLinkedin || "",
+        socialInstagram: socialInstagram || "",
+        socialYoutube: socialYoutube || "",
         updatedAt: Date.now(),
       },
       { merge: true }
